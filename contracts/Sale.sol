@@ -94,6 +94,11 @@ contract Sale {
     return _firstUnlock;
   }
 
+  uint internal _lockTime = 0; // 3m = 90d
+  function lockTime() public view returns(uint) {
+    return _lockTime;
+  }
+
   uint _totalTime = 1;
   uint _totalTranche = 1;
 
@@ -113,7 +118,8 @@ contract Sale {
     uint firstUnlock_, // %, 12,5% -> 12,5 * 10 ^ 18, 100% = 100 * 10 ^ 18
 
     uint totalTime_, // total time to full unlock
-    uint totalTranche_
+    uint totalTranche_,
+    uint lockTime_
   ) {
     _name = name_;
     _symbol = symbol_;
@@ -126,6 +132,7 @@ contract Sale {
     _firstUnlock = firstUnlock_;
     _totalTime = totalTime_;
     _totalTranche = totalTranche_;
+    _lockTime = lockTime_;
   }
 
   uint256 internal _price;
@@ -394,11 +401,11 @@ contract Sale {
     uint256 totalBuyed = _balances[investor_].add(_unlockedBalances[investor_]);
     uint256 totalFirstUnlock = totalBuyed.mul(_firstUnlock).div(100 * DECIMALS);
 
-    if (currentTime_ <= _startClaimTime + 90 days) {
+    if (currentTime_ <= _startClaimTime + _lockTime) {
       return totalFirstUnlock;
     }
 
-    uint deltaTime = currentTime_ - _startClaimTime - 90 days; // start after 30 day
+    uint deltaTime = currentTime_ - _startClaimTime - _lockTime; // 90 days; // start after 30 day
 
     // full unlock
     if (deltaTime >= _totalTime) {
@@ -414,7 +421,7 @@ contract Sale {
 
     // timePerTranche = _totalTime / _totalTranche
     // currentTranche = deltaTime / timePerTranche = deltaTime / (_totalTime / _totalTranche)
-    uint currentTranche = deltaTime.mul(_totalTranche).div(_totalTime);  // a / (b / c) => ac / b    
+    uint currentTranche = deltaTime.mul(_totalTranche).div(_totalTime) + 1;  // a / (b / c) => ac / b, starts with 0
     return currentTranche.mul(pricePerTranche).add(totalFirstUnlock);
   }
 

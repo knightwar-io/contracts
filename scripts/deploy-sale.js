@@ -40,54 +40,83 @@ async function deploy() {
   await token.deployed();
   console.log("KWS deployed to:", token.address);
 
-  /////
-
+  ///// ANGEL ROUND /////
   const Sale = await H.ethers.getContractFactory('Sale');
 
-  const strategy = await Sale.deploy(
-    'KWS-Strategy', 
-    'KWS-STR',
-    ethers.BigNumber.from(6_000_000_000).mul(DECIMALS),
-    ethers.BigNumber.from(600_000).mul(DECIMALS),
+  const angelSale = await Sale.deploy(
+    'KWS-Angel', 
+    'KWS-AGL',
+    ethers.BigNumber.from(25_000_000).mul(DECIMALS),
+    ethers.BigNumber.from(250_000).mul(DECIMALS),
+    usdt.address,
+    busd.address,
+    ethers.BigNumber.from(2).mul(DECIMALS), // 2%
+    12 * 30 * 86400, // seconds
+    12 * 30 * 86400 / (30 * 86400), // tranche
+    3 * 30 * 86400 // lockTime
+  );
+
+  await angelSale.setToken(token.address);
+  await angelSale.setPrice(H.ethers.BigNumber.from(DECIMALS).div(100)); // 0.01
+
+  // grant
+  await token.grantRole(MINTER_ROLE, angelSale.address);
+
+  console.log('Angel:', angelSale.address);
+
+
+  ///// SEED ROUND /////
+  const seedSale = await Sale.deploy(
+    'KWS-Seed', 
+    'KWS-SEED',
+    ethers.BigNumber.from(45_000_000).mul(DECIMALS),
+    ethers.BigNumber.from(675_000).mul(DECIMALS),
+    USDT,
+    BUSD,
+    ethers.BigNumber.from(5).mul(DECIMALS), // 5%
+    12 * 30 * 86400, // seconds
+    12 * 30 * 86400 / (30 * 86400), // tranche
+    3 * 30 * 86400 // lockTime
+  );
+
+  await seedSale.setToken(token.address);
+  await seedSale.setPrice(H.ethers.BigNumber.from(15).mul(DECIMALS).div(1000)); // 0.015
+
+  await token.grantRole(MINTER_ROLE, seedSale.address);
+
+  // ready to start
+  console.log('Seed:', seedSale.address);
+
+  ///// PRIVATE ROUND /////
+  const privateSale = await Sale.deploy(
+    'KWS-Private', 
+    'KWS-PRV',
+    ethers.BigNumber.from(55_000_000).mul(DECIMALS),
+    ethers.BigNumber.from(1_375_000).mul(DECIMALS),
     USDT,
     BUSD,
     ethers.BigNumber.from(10).mul(DECIMALS), // 10%
-    9 * 30 * 86400, // seconds
-    9 * 30 * 86400 / (6 * 60 * 60) // tranche
-  );
-
-  await strategy.setToken(token.address);
-  await strategy.setPrice(H.ethers.BigNumber.from(DECIMALS).div(10 ** 4));
-
-  // grant
-  await token.grantRole(MINTER_ROLE, strategy.address);
-
-  console.log('Strategy: ', strategy.address);
-
-  const privateSale = await Sale.deploy(
-    'KWS-Private', 
-    'KWS-PRI',
-    ethers.BigNumber.from(13_000_000_000).mul(DECIMALS),
-    ethers.BigNumber.from(1_950_000).mul(DECIMALS),
-    USDT,
-    BUSD,
-    ethers.BigNumber.from(12).mul(DECIMALS), // 12%
-    6 * 30 * 86400, // seconds
-    6 * 30 * 86400 / (6 * 60 * 60) // tranche
+    12 * 30 * 86400, // seconds
+    12 * 30 * 86400 / (30 * 86400), // tranche
+    2 * 30 * 86400 // lockTime
   );
 
   await privateSale.setToken(token.address);
-  await privateSale.setPrice(H.ethers.BigNumber.from(15).mul(DECIMALS).div(10 ** 5));
+  await privateSale.setPrice(H.ethers.BigNumber.from(25).mul(DECIMALS).div(1000)); // 0.025
 
   await token.grantRole(MINTER_ROLE, privateSale.address);
 
   // ready to start
-  console.log('Private: ', privateSale.address);
+  console.log('Private:', privateSale.address);
 
   console.log('config:');
   console.log(JSON.stringify({
-    STRATEGY: strategy.address,
+    
+    ANGEL: angelSale.address,
+    SEED: seedSale.address,
     PRIVATE: privateSale.address,
+    
+
     TOKEN: token.address,
     USDT,
     BUSD,

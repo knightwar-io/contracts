@@ -50,7 +50,7 @@ describe('Sale', () => {
     await token.deployed();
 
     const Sale = await ethers.getContractFactory('Sale');
-    const sale = await Sale.deploy(
+    const sale = await Sale.connect(Creator).deploy(
       'KWS-Strategy', 
       'KWS-STR',
       ethers.BigNumber.from(25_000_000).mul(DECIMALS),

@@ -34,11 +34,20 @@ async function deploy() {
     await usdt.mint('0x275EF6963F6305152079D308265AD71C69013Bdf', ethers.BigNumber.from(1_000_000_000).mul(DECIMALS));
   }
 
-  const Token = await H.ethers.getContractFactory('KWS');
-  const token = await Token.deploy();
+  let token = null;
+  if (! process.env.TOKEN_ADDRESS) {
+    const Token = await H.ethers.getContractFactory('KWS');
+    token = await Token.deploy();
 
-  await token.deployed();
-  console.log("KWS deployed to:", token.address);
+    await token.deployed();
+    console.log("KWS deployed to:", token.address);
+  } else {
+    const Token = await H.ethers.getContractFactory('KWS');
+    token = await Token.attach(process.env.TOKEN_ADDRESS);
+
+    await token.deployed();
+    console.log("KWS deployed to:", token.address);
+  }
 
   ///// ANGEL ROUND /////
   const Sale = await H.ethers.getContractFactory('Sale');
@@ -48,8 +57,8 @@ async function deploy() {
     'KWS-AGL',
     ethers.BigNumber.from(25_000_000).mul(DECIMALS),
     ethers.BigNumber.from(250_000).mul(DECIMALS),
-    usdt.address,
-    busd.address,
+    USDT,
+    BUSD,
     ethers.BigNumber.from(2).mul(DECIMALS), // 2%
     12 * 30 * 86400, // seconds
     12 * 30 * 86400 / (30 * 86400), // tranche
@@ -122,7 +131,8 @@ async function deploy() {
     BUSD,
   }, null, 2));
 
-  await strategy.start();
+  await angelSale.start();
+  await seedSale.start();
   await privateSale.start();
 }
 

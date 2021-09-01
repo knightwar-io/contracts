@@ -65,7 +65,7 @@ module.exports = {
         command: "compile",
         params: { quiet: true }
       },
-        { command: "test", params: {  noCompile: true, testFiles: ["test/Sale.spec.js"] } }],
+        { command: "test", params: {  noCompile: true, testFiles: ["test/InternalTokenLock.spec.js"] } }],
     }
   },
 };

@@ -37,7 +37,7 @@ async function deploy() {
   let token = null;
   if (! process.env.TOKEN_ADDRESS) {
     const Token = await H.ethers.getContractFactory('KWS');
-    token = await Token.deploy();
+    token = await H.upgrades.deployProxy(Token, { initializer: 'init' });
 
     await token.deployed();
     console.log("KWS deployed to:", token.address);

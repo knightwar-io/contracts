@@ -1,5 +1,5 @@
 const chai = require("chai");
-const { ethers, network } = require("hardhat");
+const { ethers, network, upgrades } = require("hardhat");
 const { solidity } = require("ethereum-waffle");
 const { utils } = require("ethers");
 
@@ -46,7 +46,7 @@ describe('Sale', () => {
 
     const KWS = await ethers.getContractFactory('KWS');
 
-    const token = await KWS.deploy();
+    const token = await upgrades.deployProxy(KWS, { initializer: 'init' });
     await token.deployed();
 
     const Sale = await ethers.getContractFactory('Sale');

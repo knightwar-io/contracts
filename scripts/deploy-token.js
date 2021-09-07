@@ -1,12 +1,9 @@
 
-
-
-
 const H = require("hardhat");
 
 async function play() {
   const Token = await H.ethers.getContractFactory('KWS');
-  const token = await Token.deploy();
+  const token = await H.upgrades.deployProxy(Token, { initializer: 'init' });
 
   await token.deployed();
   console.log("KWS deployed to:", token.address);

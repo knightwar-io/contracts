@@ -42,7 +42,7 @@ describe('InternalTokenLock', async () => {
 
   beforeEach(async () => {
     const KWS = await ethers.getContractFactory('KWS');
-    const token = await KWS.connect(wallets.deployer).deploy();
+    const token = await upgrades.deployProxy(KWS, { initializer: 'init' });
     await token.deployed();
     contracts.token = token;
 

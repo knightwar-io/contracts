@@ -3,6 +3,8 @@ require("hardhat-watcher");
 require("hardhat-deploy-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require('@openzeppelin/hardhat-upgrades');
+
 
 // const { ethers } = require("ethers"); // do not include ethers
 const { task } = require("hardhat/config");
@@ -67,7 +69,14 @@ module.exports = {
         params: { quiet: true }
       },
         { command: "test", params: {  noCompile: true, testFiles: ["test/Sale.spec.js"] } }],
-    }
+    },
+    compile: {
+      files: ["./contracts"],
+      tasks: ["clean", {
+          command: "compile"
+        }
+      ]
+    },
   },
 };
 

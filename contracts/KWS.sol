@@ -2,20 +2,27 @@
 
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/presets/ERC20PresetMinterPauserUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 import "./interfaces/ITokenReceiver.sol";
 
-contract KWS is ERC20PresetMinterPauser, Ownable {
-  using Address for address;
-  using SafeMath for uint256;
+contract KWS is ERC20PresetMinterPauserUpgradeable {
+  using AddressUpgradeable for address;
+  using SafeMathUpgradeable for uint256;
 
-  constructor() ERC20PresetMinterPauser("KnightWar Share", "KWS") {}
+  bytes32 public constant TOKEN_RECEIVER_ROLE = keccak256("TOKEN_RECEIVER_ROLE");
 
-  uint256 internal _totalMinted = 0;
+  function init() public initializer {
+    _totalMinted = 0;
+
+    __ERC20PresetMinterPauser_init("KnightWar Share", "KWS");
+    _setupRole(TOKEN_RECEIVER_ROLE, _msgSender());
+  }
+
+  uint256 internal _totalMinted;
   uint256 constant TOTAL_SUPPLY = 5 * 10 ** 8 * (10 ** 18);
 
   function totalMinted() public view returns(uint256) {
@@ -31,9 +38,9 @@ contract KWS is ERC20PresetMinterPauser, Ownable {
    *
    * - the caller must have the `MINTER_ROLE`.
    */
-  function mint(address to, uint256 amount) public override(ERC20PresetMinterPauser) {
+  function mint(address to, uint256 amount) public override(ERC20PresetMinterPauserUpgradeable) {
     require(TOTAL_SUPPLY - _totalMinted >= amount, "KWS: Reach total supply");
-    ERC20PresetMinterPauser.mint(to, amount);
+    ERC20PresetMinterPauserUpgradeable.mint(to, amount);
     _totalMinted = _totalMinted.add(amount);
   }
 
@@ -42,7 +49,7 @@ contract KWS is ERC20PresetMinterPauser, Ownable {
     return _tokenReceivers[addr];
   }
 
-  function setTokenReceiver(address addr, bool status) public onlyOwner() {
+  function setTokenReceiver(address addr, bool status) public onlyRole(TOKEN_RECEIVER_ROLE) {
     _tokenReceivers[addr] = status;
   }
 
@@ -50,7 +57,7 @@ contract KWS is ERC20PresetMinterPauser, Ownable {
     address from,
     address to,
     uint256 amount
-  ) internal virtual {
+  ) internal virtual override {
     // self implement a part of IERC777
     if (to.isContract() && _tokenReceivers[to]) {
       ITokenReceiver(to).tokensReceived(address(this), from, to, amount);

@@ -280,7 +280,7 @@ describe('Sale', () => {
       });
 
       // SALE scenario
-      it('multiple saler', async () => {
+      it('multiple seller', async () => {
         const stableDecimals = ethers.BigNumber.from(10).pow(await USDT.decimals());
         const usd = ethers.BigNumber.from(1000).mul(stableDecimals); // $1000
         const total = await calcToken(usd, stableDecimals);

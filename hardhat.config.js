@@ -1,4 +1,3 @@
-
 require("hardhat-watcher");
 require("hardhat-deploy-ethers");
 require("@nomiclabs/hardhat-waffle");
@@ -26,9 +25,9 @@ module.exports = {
   // defaultNetwork: "",
 
   networks: {
-    // hardhat: {
-    //   chainId: 1337
-    // },
+    hardhat: {
+      chainId: 1337
+    },
     // rinkeby: {
     //   url: 'https://rinkeby.infura.io/v3/0720d1c4ec394f4090d9be740db47db0',
     //   accounts: [process.env.OPERATOR_PRIVATE_KEY],
@@ -40,8 +39,10 @@ module.exports = {
       chainId: 97,
     },
     localhost: {
+      saveDeployments: true,
       url: "http://127.0.0.1:8545",
-      accounts: ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"]
+      accounts: ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"],
+      initialBaseFeePerGas: 0, // to fix : https://github.com/sc-forks/solidity-coverage/issues/652, see https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136
     },
   },
 
@@ -68,15 +69,15 @@ module.exports = {
         command: "compile",
         params: { quiet: true }
       },
-        { command: "test", params: {  noCompile: true, testFiles: ["test/Sale.spec.js"] } }],
+        { command: "test", params: { noCompile: true } }],
     },
     compile: {
       files: ["./contracts"],
       tasks: ["clean", {
-          command: "compile"
-        }
+        command: "compile"
+      }
       ]
     },
-  },
+  }
 };
 

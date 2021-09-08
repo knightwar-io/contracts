@@ -114,8 +114,8 @@ contract InternalTokenLock is AccessControl {
   //////////////////////////////
   // Marketing
   //////////////////////////////
-  uint256 constant public MARKETING = 32500000 * DECIMALS; // 6.5%
-  uint256 constant public PREUNLOCK_MARKETING = 650000 * DECIMALS; // 2%
+  uint256 constant public MARKETING = 42000000 * DECIMALS; // 8.4%
+  uint256 constant public PREUNLOCK_MARKETING = 840000 * DECIMALS; // 2%
   uint256 internal _marketing = 0;
   uint256 internal _startMarketingTime = 0;
   bool internal _isPreunlockMarketing = false;
@@ -134,7 +134,7 @@ contract InternalTokenLock is AccessControl {
     if (_startMarketingTime == 0) return 0;
 
     uint _currentTranche = (ts - _startMarketingTime) / (30 * 86400); // per quarter
-    uint256 _tokenPerTranche = 1770000 * DECIMALS; // (MARKETING - _initial) / 18; // 5% per quarter
+    uint256 _tokenPerTranche = 2287000 * DECIMALS; // (MARKETING - _initial) / 18; // 5% per quarter ~ 2.286.666,6666666665
     uint256 _total = _currentTranche * _tokenPerTranche;
 
     if (_total >= MARKETING - PREUNLOCK_MARKETING) {
@@ -144,10 +144,10 @@ contract InternalTokenLock is AccessControl {
     return _total;
   }
 
-  function preunlockMarketing(address receiver) public {
+  function preunlockMarketing(address receiver) public onlyRole(MARKETING_ROLE) {
     require(_marketing < MARKETING, "InternalTokenLock: end of unlock");
     require(_token.balanceOf(address(this)) > 0);
-    require(!_isPreunlockMarketing);
+    require(!_isPreunlockMarketing, "InternalTokenLock: preunlocked");
 
     uint256 amount = PREUNLOCK_MARKETING;
     _marketing = amount;
@@ -178,8 +178,8 @@ contract InternalTokenLock is AccessControl {
   //////////////////////////////
   // Liquidity
   //////////////////////////////
-  uint256 constant public LIQUIDITY = 77000000 * DECIMALS; // 15.4%
-  uint256 constant public PREUNLOCK_LIQUIDITY = 3850000 * DECIMALS;
+  uint256 constant public LIQUIDITY = 70000000 * DECIMALS; // 14%
+  uint256 constant public PREUNLOCK_LIQUIDITY = 3500000 * DECIMALS;
   uint256 internal _liquidity = 0;
   uint256 internal _startLiquidityTime = 0;
   bool internal _isPreunlockLiquidity = false;
@@ -198,7 +198,7 @@ contract InternalTokenLock is AccessControl {
     if (_startLiquidityTime == 0) return 0;
 
     uint _currentTranche = (ts - _startLiquidityTime) / (30 * 86400); // per quarter
-    uint256 _tokenPerTranche = 6096000 * DECIMALS;
+    uint256 _tokenPerTranche = 5542000 * DECIMALS; // 5.541.666,666666667
     uint256 _total = _currentTranche * _tokenPerTranche;
 
     if (_total >= LIQUIDITY - PREUNLOCK_LIQUIDITY) {
@@ -208,7 +208,7 @@ contract InternalTokenLock is AccessControl {
     return _total;
   }
 
-  function preunlockLiquidity(address receiver) public {
+  function preunlockLiquidity(address receiver) public onlyRole(LIQUIDITY_ROLE) {
     require(_marketing < LIQUIDITY, "InternalTokenLock: end of unlock");
     require(_token.balanceOf(address(this)) > 0);
     require(!_isPreunlockLiquidity);
@@ -242,12 +242,12 @@ contract InternalTokenLock is AccessControl {
   // Ecosystem &  Team & Advisor
   //////////////////////////////
   uint256 public constant LOCK_TIME = 6 * 30 * 86400; // 6 month
-  uint256 public constant ECOSYSTEM = 32500000 * DECIMALS;
-  uint256 public constant ECOSYSTEM_PER_TRANCHE = 542000 * DECIMALS; // 541666,666...
-  uint256 public constant TEAM = 60000000 * DECIMALS;
-  uint256 public constant TEAM_PER_TRANCHE = 6000000 * DECIMALS; // 10% monthly
+  uint256 public constant ECOSYSTEM = 50000000 * DECIMALS;
+  uint256 public constant ECOSYSTEM_PER_TRANCHE = 833334 * DECIMALS; // 833.333,3333333333
+  uint256 public constant TEAM = 65000000 * DECIMALS;
+  uint256 public constant TEAM_PER_TRANCHE = 6500000 * DECIMALS; // 10% quarterly
   uint256 public constant ADVISOR = 20000000 * DECIMALS;
-  uint256 public constant ADVISOR_PER_TRANCHE = 2000000 * DECIMALS; // 10% monthly
+  uint256 public constant ADVISOR_PER_TRANCHE = 2000000 * DECIMALS; // 10% quarterly
 
   uint internal _startLockTime = 0;
 
@@ -281,7 +281,7 @@ contract InternalTokenLock is AccessControl {
 
     uint currentTranche = (ts - _startLockTime - LOCK_TIME) / (30 * 86400) + 1; // unlock monthly
     uint256 total = currentTranche * ECOSYSTEM_PER_TRANCHE;
-    if (total >= ECOSYSTEM) { // last month = 522000
+    if (total >= ECOSYSTEM) {
       return ECOSYSTEM;
     }
 
@@ -310,7 +310,8 @@ contract InternalTokenLock is AccessControl {
     // 6 months lock
     if (ts - _startLockTime < LOCK_TIME) return 0;
 
-    uint currentTranche = (ts - _startLockTime - LOCK_TIME) / (3 * 30 * 86400) + 1;
+    uint256 QUARTERLY = 3 * 30 * 86400;
+    uint256 currentTranche = (ts - _startLockTime - LOCK_TIME) / QUARTERLY + 1;
     uint256 total = currentTranche * TEAM_PER_TRANCHE;
 
     if (total >= TEAM) {
@@ -342,7 +343,8 @@ contract InternalTokenLock is AccessControl {
     // 6 months lock
     if (ts - _startLockTime < LOCK_TIME) return 0;
 
-    uint currentTranche = (ts - _startLockTime - LOCK_TIME) / (3 * 30 * 86400) + 1;
+    uint QUARTERLY = 3 * 30 * 86400;
+    uint currentTranche = (ts - _startLockTime - LOCK_TIME) / QUARTERLY + 1;
     uint256 total = currentTranche * ADVISOR_PER_TRANCHE;
 
     if (total >= ADVISOR) {

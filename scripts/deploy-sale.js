@@ -16,13 +16,13 @@ async function deploy() {
   // deploy USDT
   if (DEV) {
     const CUSDT = await H.ethers.getContractFactory('TetherToken');
-    const usdt = await CUSDT.deploy('TetherToken', 'USDT');
+    const usdt = await CUSDT.deploy('TetherToken', 'USDT', 6);
     await usdt.deployed();
 
     console.log('USDT deployed to: ', usdt.address);
 
     const CBUSD = await H.ethers.getContractFactory('TetherToken');
-    const busd = await CBUSD.deploy('BinanceUSD', 'BUSD');
+    const busd = await CBUSD.deploy('BinanceUSD', 'BUSD', 18);
     await busd.deployed();
 
     console.log('BUSD deployed to: ', busd.address);
@@ -30,8 +30,9 @@ async function deploy() {
     BUSD = busd.address;
     USDT = usdt.address;
 
+    const DECIMALS_STABLE = await usdt.decimals();
     await busd.mint('0x4cb0cB3347c95107bC5A4736D34ef31897c713fe', ethers.BigNumber.from(1_000_000_000).mul(DECIMALS));
-    await usdt.mint('0x275EF6963F6305152079D308265AD71C69013Bdf', ethers.BigNumber.from(1_000_000_000).mul(DECIMALS));
+    await usdt.mint('0x275EF6963F6305152079D308265AD71C69013Bdf', ethers.BigNumber.from(1_000_000_000).mul(DECIMALS_STABLE));
   }
 
   let token = null;
@@ -55,8 +56,8 @@ async function deploy() {
   const angelSale = await Sale.deploy(
     'KWS-Angel', 
     'KWS-AGL',
-    ethers.BigNumber.from(25_000_000).mul(DECIMALS),
-    ethers.BigNumber.from(250_000).mul(DECIMALS),
+    ethers.BigNumber.from(12_500_000).mul(DECIMALS),
+    ethers.BigNumber.from(125_000).mul(DECIMALS),
     USDT,
     BUSD,
     ethers.BigNumber.from(2).mul(DECIMALS), // 2%
@@ -78,14 +79,14 @@ async function deploy() {
   const seedSale = await Sale.deploy(
     'KWS-Seed', 
     'KWS-SEED',
-    ethers.BigNumber.from(45_000_000).mul(DECIMALS),
-    ethers.BigNumber.from(675_000).mul(DECIMALS),
+    ethers.BigNumber.from(30_000_000).mul(DECIMALS),
+    ethers.BigNumber.from(450_000).mul(DECIMALS),
     USDT,
     BUSD,
     ethers.BigNumber.from(5).mul(DECIMALS), // 5%
     12 * 30 * 86400, // seconds
     12 * 30 * 86400 / (30 * 86400), // tranche
-    3 * 30 * 86400 // lockTime
+    2 * 30 * 86400 // lockTime
   );
 
   await seedSale.setToken(token.address);
@@ -100,8 +101,8 @@ async function deploy() {
   const privateSale = await Sale.deploy(
     'KWS-Private', 
     'KWS-PRV',
-    ethers.BigNumber.from(55_000_000).mul(DECIMALS),
-    ethers.BigNumber.from(1_375_000).mul(DECIMALS),
+    ethers.BigNumber.from(57_500_000).mul(DECIMALS),
+    ethers.BigNumber.from(1_437_000).mul(DECIMALS),
     USDT,
     BUSD,
     ethers.BigNumber.from(10).mul(DECIMALS), // 10%

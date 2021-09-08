@@ -1,15 +1,11 @@
 const chai = require("chai");
 const { ethers, network } = require("hardhat");
 const { solidity } = require("ethereum-waffle");
-const { keccak256 } = require("ethers/lib/utils");
 
 const { expect } = chai;
 chai.use(solidity);
 
 const DECIMALS = ethers.BigNumber.from(10).pow(18);
-// const MINTER_ROLE = '0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6'; // ethers.utils.keccak256('MINTER_ROLE');
-// let TOKEN, INTERNAL_TOKEN_LOCK;
-// let AdvisorWallet, EcoSystemWallet, TeamWallet, LiqWallet;
 
 describe('InternalTokenLock', async () => {
 
@@ -150,8 +146,7 @@ describe('InternalTokenLock', async () => {
       const beforeBalance = await contracts.token.balanceOf(wallets.marketing.address);
       const res = await contracts.lock.connect(wallets.marketing).preunlockMarketing(wallets.marketing.address);
 
-      const TOTAL_MARKETING = await contracts.lock.MARKETING();
-      const PREUNLOCK_TOKEN = TOTAL_MARKETING.mul(2).div(100);
+      const PREUNLOCK_TOKEN = await contracts.lock.PREUNLOCK_MARKETING();
 
       expect(await contracts.lock.marketing()).to.be.eq(PREUNLOCK_TOKEN);
       expect(await contracts.token.balanceOf(wallets.marketing.address)).to.be.eq(beforeBalance.add(PREUNLOCK_TOKEN));
@@ -177,8 +172,8 @@ describe('InternalTokenLock', async () => {
       // unlock per month
       await network.provider.send("evm_increaseTime", [86400 * 30]);
       const TOTAL_MARKETING = await contracts.lock.MARKETING();
-      const PREUNLOCK_TOKEN = TOTAL_MARKETING.mul(2).div(100);
-      const TOKEN_PER_TRANCHE = ethers.BigNumber.from(1_770_000).mul(DECIMALS); // it is not natural number TOTAL_MARKETING.sub(PREUNLOCK);
+      const PREUNLOCK_TOKEN = await contracts.lock.PREUNLOCK_MARKETING(); // TOTAL_MARKETING.mul(2).div(100);
+      const TOKEN_PER_TRANCHE = ethers.BigNumber.from(2_287_000).mul(DECIMALS); // it is not natural number TOTAL_MARKETING.sub(PREUNLOCK);
 
       const startMarketingTime = await contracts.lock.startMarketingTime();
       const totalPreUnlockInFirstTranche = await contracts.lock.connect(wallets.marketing)
@@ -230,7 +225,7 @@ describe('InternalTokenLock', async () => {
       await contracts.lock.connect(wallets.liquidity).preunlockLiquidity(wallets.liquidity.address);
 
       const TOTAL_LIQ = await contracts.lock.LIQUIDITY();
-      const PREUNLOCK_TOKEN = TOTAL_LIQ.mul(5).div(100);
+      const PREUNLOCK_TOKEN = await contracts.lock.PREUNLOCK_LIQUIDITY();
 
       expect(await contracts.lock.liquidity()).to.be.eq(PREUNLOCK_TOKEN);
       expect(await contracts.token.balanceOf(wallets.liquidity.address)).to.be.eq(beforeBalance.add(PREUNLOCK_TOKEN));
@@ -256,8 +251,8 @@ describe('InternalTokenLock', async () => {
       // unlock per month
       await network.provider.send("evm_increaseTime", [86400 * 30]);
       const TOTAL_LIQ = await contracts.lock.LIQUIDITY();
-      const PREUNLOCK_TOKEN = TOTAL_LIQ.mul(5).div(100);
-      const TOKEN_PER_TRANCHE = ethers.BigNumber.from(6096_000).mul(DECIMALS); // it is not natural number TOTAL_LIQ.sub(PREUNLOCK);
+      const PREUNLOCK_TOKEN = await contracts.lock.PREUNLOCK_LIQUIDITY();
+      const TOKEN_PER_TRANCHE = ethers.BigNumber.from(5_542_000).mul(DECIMALS); // it is not natural number TOTAL_LIQ.sub(PREUNLOCK);
 
       const startLiqTime = await contracts.lock.startLiquidityTime();
       const totalPreUnlockInFirstTranche = await contracts.lock.connect(wallets.liquidity)
@@ -396,12 +391,14 @@ describe('InternalTokenLock', async () => {
         .to.be.eq(beforeBalance.add((await contracts.lock.TEAM_PER_TRANCHE()).mul(2)));
       expect(await contracts.lock.team()).to.be.eq((await contracts.lock.TEAM_PER_TRANCHE()).mul(2));
       
-      // 3 years
-      await network.provider.send("evm_increaseTime", [86400 * 365 * 3]); // full unlock ~ 2.5 year
-      const rx = await contracts.lock.connect(wallets.team).unlockTeam(wallets.team.address);
+      // 10% / quarterly => full unlock after 10*3 month
+      await network.provider.send("evm_increaseTime", [86400 * 30 * 3 * 10]); // full unlock ~ 2.5 year
+      let rx = await contracts.lock.connect(wallets.team).unlockTeam(wallets.team.address);
+
       expect(rx).to.emit(contracts.lock, 'TeamReleased')
         .withArgs(wallets.team.address, 
-          (await contracts.lock.TEAM()).sub(await contracts.lock.TEAM_PER_TRANCHE()).sub(await contracts.lock.TEAM_PER_TRANCHE()));
+          (await contracts.lock.TEAM()).sub((await contracts.lock.TEAM_PER_TRANCHE()).mul(2)));
+
       expect(await contracts.token.balanceOf(wallets.team.address))
         .to.be.eq(beforeBalance.add(await contracts.lock.TEAM()));
 

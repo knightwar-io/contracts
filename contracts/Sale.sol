@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-// import 'hardhat/console.sol';
+import 'hardhat/console.sol';
 
 import './KWS.sol';
 
@@ -29,7 +29,7 @@ contract Sale {
   }
 
   function decimals() public pure returns (uint8) {
-    return 18;
+    return 18; // = DECIMAL of Token (KWS)
   }
 
   /**
@@ -84,8 +84,8 @@ contract Sale {
     return _quantity;
   }
 
-  IERC20 usdt;
-  IERC20 busd;
+  ERC20 usdt;
+  ERC20 busd;
 
   uint internal _firstUnlock = 0;
 
@@ -111,8 +111,8 @@ contract Sale {
     string memory symbol_,
     uint256 quantity_,
     uint256 hardCap_,
-    IERC20 usdt_,
-    IERC20 busd_,
+    ERC20 usdt_,
+    ERC20 busd_,
 
     // 0-th
     uint firstUnlock_, // %, 12,5% -> 12,5 * 10 ^ 18, 100% = 100 * 10 ^ 18
@@ -142,6 +142,7 @@ contract Sale {
 
   // number token per $1
   // 10^-4 * 10 ^ 18 / 10 ^ 18
+  // price DECIMALS = 18, Note: Decimal USD is 6 but we use 18
   function setPrice(uint256 price_) public onlyOwner() {
     require(_startTime == 0, "Sale closed or running");
     require(price_ > 0, 'price must be > 0');
@@ -307,13 +308,22 @@ contract Sale {
 
     // TODO: check buy limit
     require(actualBuy <= totalCanBuy, 'you are reach limit token can buy');
-    
-    uint256 usd = actualBuy.div(DECIMALS).mul(price());
+    uint256 usd = actualBuy.mul(price()).div(DECIMALS); // USD in decimals 18
 
-    require(IERC20(stable).allowance(investor, address(this)) >= usd, 'allowance is not enough to buy');
-    require(IERC20(stable).balanceOf(investor) >= usd, 'you can not enough money to buy');
+    ERC20 stableToken = ERC20(stable);
 
-    IERC20(stable).transferFrom(investor, address(this), usd);
+    // because usdt is using decimal 6 => convert to decimal 6 to transfer
+    uint256 stableDecimals = 10 ** stableToken.decimals();
+    if (DECIMALS > stableDecimals) { // ex: 100 x 10 ^ 18 = 100 x 10 ^ 6 x (18 - 6)
+      usd = usd.div(DECIMALS/stableDecimals);
+    } else if (DECIMALS < stableDecimals) {
+      usd = usd.mul(stableDecimals/DECIMALS);
+    }
+
+    require(ERC20(stable).allowance(investor, address(this)) >= usd, 'allowance is not enough to buy');
+    require(ERC20(stable).balanceOf(investor) >= usd, 'you can not enough money to buy');
+
+    ERC20(stable).transferFrom(investor, address(this), usd);
     _balances[investor] = _balances[investor].add(actualBuy);
     _totalSupply = _totalSupply.add(actualBuy);
 

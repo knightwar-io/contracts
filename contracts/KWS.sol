@@ -15,7 +15,7 @@ contract KWS is ERC20PresetMinterPauserUpgradeable {
 
   bytes32 public constant TOKEN_RECEIVER_ROLE = keccak256("TOKEN_RECEIVER_ROLE");
 
-  function init() public initializer {
+  function init() public virtual initializer {
     _totalMinted = 0;
 
     __ERC20PresetMinterPauser_init("KnightWar Share", "KWS");

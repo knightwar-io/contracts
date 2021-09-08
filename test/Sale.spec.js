@@ -19,8 +19,8 @@ describe('Sale', () => {
 
     const StableToken = await ethers.getContractFactory('TetherToken');
 
-    const usdt = await StableToken.deploy('TetherToken', 'USDT');
-    const busd = await StableToken.deploy('BinanceUSD', 'BUSD');
+    const usdt = await StableToken.deploy('TetherToken', 'USDT', 6);
+    const busd = await StableToken.deploy('BinanceUSD', 'BUSD', 18);
     await usdt.deployed();
     await busd.deployed();
 
@@ -51,10 +51,10 @@ describe('Sale', () => {
 
     const Sale = await ethers.getContractFactory('Sale');
     const sale = await Sale.connect(Creator).deploy(
-      'KWS-Strategy', 
-      'KWS-STR',
-      ethers.BigNumber.from(25_000_000).mul(DECIMALS),
-      ethers.BigNumber.from(250_000).mul(DECIMALS),
+      'KWS-Angel', 
+      'KWS-AGL',
+      ethers.BigNumber.from(12_500_000).mul(DECIMALS),
+      ethers.BigNumber.from(125_000).mul(DECIMALS),
       usdt.address,
       busd.address,
       ethers.BigNumber.from(2).mul(DECIMALS), // 2%
@@ -72,9 +72,13 @@ describe('Sale', () => {
   });
 
   // total USD per $token
-  const calcToken = async (amountUsd) => {
+  const calcToken = async (amountUsd, stableDecimals = DECIMALS) => {
     // price x amountUSD
     const price = ethers.BigNumber.from(await ITO.price());
+    if (DECIMALS.gt(ethers.BigNumber.from(stableDecimals))) {
+      return amountUsd.mul(DECIMALS.mul(DECIMALS.div(stableDecimals))).div(price);
+    }
+
     return amountUsd.mul(DECIMALS).div(price);
   }
 
@@ -97,8 +101,10 @@ describe('Sale', () => {
     // convert rate
     it('price calc', async () => {
       await ITO.setPrice(ethers.BigNumber.from(DECIMALS).div(ethers.BigNumber.from(10).pow(2)));
-      const usd = ethers.BigNumber.from(250_000).mul(DECIMALS);
-      const token = await calcToken(usd);
+
+      const stableDecimals = ethers.BigNumber.from(10).pow(await USDT.decimals());
+      const usd = ethers.BigNumber.from(250_000).mul(stableDecimals);
+      const token = await calcToken(usd, stableDecimals);
       expect(token).to.be.eq(ethers.BigNumber.from(25_000_000).mul(DECIMALS));
     });
   });
@@ -262,8 +268,9 @@ describe('Sale', () => {
       });
 
       it('in allowlist', async () => {
-        const usd = ethers.BigNumber.from(1000).mul(DECIMALS); // $1000
-        const total = await calcToken(usd);
+        const stableDecimals = ethers.BigNumber.from(10).pow(await USDT.decimals());
+        const usd = ethers.BigNumber.from(1000).mul(stableDecimals); // $1000
+        const total = await calcToken(usd, stableDecimals);
 
         await USDT.connect(SeedBuyer1).approve(ITO.address, usd);
 
@@ -274,8 +281,9 @@ describe('Sale', () => {
 
       // SALE scenario
       it('multiple saler', async () => {
-        const usd = ethers.BigNumber.from(1000).mul(DECIMALS); // $1000
-        const total = await calcToken(usd);
+        const stableDecimals = ethers.BigNumber.from(10).pow(await USDT.decimals());
+        const usd = ethers.BigNumber.from(1000).mul(stableDecimals); // $1000
+        const total = await calcToken(usd, stableDecimals);
 
         await USDT.connect(SeedBuyer1).approve(ITO.address, usd);
         await USDT.connect(SeedBuyer2).approve(ITO.address, usd);
@@ -302,13 +310,11 @@ describe('Sale', () => {
       // buy & exceeds token limit
       it('buy & exceeds token limit', async () => {
         // ..
-
-
       });
 
       it('buy & exceeds', async () => {
-        const usd = ethers.BigNumber.from(1000).mul(DECIMALS); // $1000
-        const total = await calcToken(usd);
+        const usd = ethers.BigNumber.from(1000).mul(10 ** 6); // $1000
+        const total = await calcToken(usd, 10 ** 6);
 
         const balanceSeed1 = await USDT.balanceOf(SeedBuyer1.address);
 
@@ -335,7 +341,7 @@ describe('Sale', () => {
         const totalUSDSpentBySeed2 = balanceSeed2.sub(await USDT.balanceOf(SeedBuyer2.address));
         
         expect(await USDT.balanceOf(SeedBuyer1.address)).to.be.eq(remainSeed1);
-        expect(remain).to.be.eq(await calcToken(totalUSDSpentBySeed2));
+        expect(remain).to.be.eq(await calcToken(totalUSDSpentBySeed2, 10 ** 6));
 
         // auto close
         expect(await ITO.endTime()).to.be.gt(ethers.BigNumber.from(0));
@@ -359,8 +365,9 @@ describe('Sale', () => {
       });
 
       it('buy & withdraw to wallet', async () => {
-        const usd = ethers.BigNumber.from(250_000).mul(DECIMALS);
-        const total = await calcToken(usd);
+        const stableDecimals = ethers.BigNumber.from(10).pow(await USDT.decimals());
+        const usd = ethers.BigNumber.from(250_000).mul(stableDecimals);
+        const total = await calcToken(usd, stableDecimals);
         await USDT.mint(SeedBuyer1.address, usd);
 
         await USDT.connect(SeedBuyer1).approve(ITO.address, usd);
@@ -378,7 +385,7 @@ describe('Sale', () => {
 
       // buy usdt & busd together
       it('buy usdt & busd together', async () => {
-        const usdt = ethers.BigNumber.from(1000).mul(DECIMALS);
+        const usdt = ethers.BigNumber.from(1000).mul(10 ** 6);
         const busd = ethers.BigNumber.from(1200).mul(DECIMALS);
 
         await USDT.connect(SeedBuyer1).approve(ITO.address, usdt);
@@ -390,7 +397,7 @@ describe('Sale', () => {
         const busdBalanceOfSeed1 = await BUSD.balanceOf(SeedBuyer1.address);
         const busdBalanceOfSeed2 = await BUSD.balanceOf(SeedBuyer2.address);
 
-        const totalTokenViaUsdt = await calcToken(usdt);
+        const totalTokenViaUsdt = await calcToken(usdt, 10 ** 6);
         const totalTokenViaBusd = await calcToken(busd);
 
         await ITO.connect(SeedBuyer1).buy(USDT.address, totalTokenViaUsdt);
@@ -413,22 +420,22 @@ describe('Sale', () => {
     });
 
     describe('claim', async () => {
-      const tenThousandDolar = ethers.BigNumber.from(1000).mul(DECIMALS);
-      const halfDolar = ethers.BigNumber.from(3).mul(DECIMALS).div(10000000);
+      const tenThousandDollar = ethers.BigNumber.from(1000).mul(DECIMALS);
+      const halfDollar = ethers.BigNumber.from(3).mul(DECIMALS).div(10000000);
       
       beforeEach(async () => {
 
         await ITO.start();
 
-        // we need $ 600_000 in seed round
-        const totalToken = await calcToken(tenThousandDolar);
-        const totalTokenByHalfDolar = await calcToken(halfDolar); // we need check if someone buy a mount that it can not divisor
+        // we need $125000 in seed round
+        const totalToken = await calcToken(tenThousandDollar);
+        const totalTokenByHalfDollar = await calcToken(halfDollar); // we need check if someone buy a mount that it can not divisor
 
-        await BUSD.connect(SeedBuyer1).approve(ITO.address, tenThousandDolar.add(halfDolar));
-        await BUSD.connect(SeedBuyer2).approve(ITO.address, tenThousandDolar.sub(halfDolar));
+        await BUSD.connect(SeedBuyer1).approve(ITO.address, tenThousandDollar.add(halfDollar));
+        await BUSD.connect(SeedBuyer2).approve(ITO.address, tenThousandDollar.sub(halfDollar));
         
-        await ITO.connect(SeedBuyer1).buy(BUSD.address, totalToken.add(totalTokenByHalfDolar));
-        await ITO.connect(SeedBuyer2).buy(BUSD.address, totalToken.sub(totalTokenByHalfDolar));
+        await ITO.connect(SeedBuyer1).buy(BUSD.address, totalToken.add(totalTokenByHalfDollar));
+        await ITO.connect(SeedBuyer2).buy(BUSD.address, totalToken.sub(totalTokenByHalfDollar));
       });
 
       it('must be end of sale to claim', async () => {
@@ -452,7 +459,7 @@ describe('Sale', () => {
           const price = await ITO.price();
           const total = (await ITO.quantity()).div(price).mul(DECIMALS);
 
-          const remain = total.sub(tenThousandDolar.mul(2)); // s1 & s2 buyed
+          const remain = total.sub(tenThousandDollar.mul(2)); // s1 & s2 buyed
 
           await USDT.mint(SeedBuyer1.address, remain);
           await USDT.connect(SeedBuyer1).approve(ITO.address, remain);

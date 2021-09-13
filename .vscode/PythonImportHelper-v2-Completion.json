@@ -1,0 +1,207 @@
+[
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "os,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os.",
+        "description": "os.",
+        "detail": "os.",
+        "documentation": {}
+    },
+    {
+        "label": "AES",
+        "importPath": "Crypto.Cipher",
+        "description": "Crypto.Cipher",
+        "isExtraImport": true,
+        "detail": "Crypto.Cipher",
+        "documentation": {}
+    },
+    {
+        "label": "Counter",
+        "importPath": "Crypto.Util",
+        "description": "Crypto.Util",
+        "isExtraImport": true,
+        "detail": "Crypto.Util",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "urllib2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "urllib2",
+        "description": "urllib2",
+        "detail": "urllib2",
+        "documentation": {}
+    },
+    {
+        "label": "NoIndent",
+        "kind": 6,
+        "importPath": "node_modules.aes-js.generate-tests",
+        "description": "node_modules.aes-js.generate-tests",
+        "peekOfCode": "class NoIndent(object):\n    def __init__(self, value):\n        self.value = value\ndef default(o, encoder=json.JSONEncoder()):\n    if isinstance(o, NoIndent):\n        return '__' + json.dumps(o.value) + '__'\n    return encoder.default(o)\nimport os, time\nTests = []\n# compare against a known working implementation",
+        "detail": "node_modules.aes-js.generate-tests",
+        "documentation": {}
+    },
+    {
+        "label": "default",
+        "kind": 2,
+        "importPath": "node_modules.aes-js.generate-tests",
+        "description": "node_modules.aes-js.generate-tests",
+        "peekOfCode": "def default(o, encoder=json.JSONEncoder()):\n    if isinstance(o, NoIndent):\n        return '__' + json.dumps(o.value) + '__'\n    return encoder.default(o)\nimport os, time\nTests = []\n# compare against a known working implementation\nfrom Crypto.Cipher import AES as KAES\nfrom Crypto.Util import Counter as KCounter\nfor mode in [ 'CBC', 'CTR',  'CFB', 'ECB', 'OFB' ]:",
+        "detail": "node_modules.aes-js.generate-tests",
+        "documentation": {}
+    },
+    {
+        "label": "Tests",
+        "kind": 5,
+        "importPath": "node_modules.aes-js.generate-tests",
+        "description": "node_modules.aes-js.generate-tests",
+        "peekOfCode": "Tests = []\n# compare against a known working implementation\nfrom Crypto.Cipher import AES as KAES\nfrom Crypto.Util import Counter as KCounter\nfor mode in [ 'CBC', 'CTR',  'CFB', 'ECB', 'OFB' ]:\n    (tt_ksetup, tt_kencrypt, tt_kdecrypt) = (0.0, 0.0, 0.0)\n    (tt_setup, tt_encrypt, tt_decrypt) = (0.0, 0.0, 0.0)\n    count = 0\n    for key_size in (128, 192, 256):\n        for test in xrange(1, 8):",
+        "detail": "node_modules.aes-js.generate-tests",
+        "documentation": {}
+    },
+    {
+        "label": "reJavaScript",
+        "kind": 5,
+        "importPath": "node_modules.aes-js.run-readme",
+        "description": "node_modules.aes-js.run-readme",
+        "peekOfCode": "reJavaScript = re.compile('```javascript((.|\\n)*?)```')\nreadmeData = file('README.md').read()\nprint 'const aesjs = require(\"./index.js\");'\nfor (example, nl) in reJavaScript.findall(readmeData):\n    print 'console.log(\"=====================\");'\n    print '(function() {'\n    print '    try {'\n    print 'console.log(%r)' % example\n    for line in example.split('\\n'):\n        print (' ' * 8) + line",
+        "detail": "node_modules.aes-js.run-readme",
+        "documentation": {}
+    },
+    {
+        "label": "readmeData",
+        "kind": 5,
+        "importPath": "node_modules.aes-js.run-readme",
+        "description": "node_modules.aes-js.run-readme",
+        "peekOfCode": "readmeData = file('README.md').read()\nprint 'const aesjs = require(\"./index.js\");'\nfor (example, nl) in reJavaScript.findall(readmeData):\n    print 'console.log(\"=====================\");'\n    print '(function() {'\n    print '    try {'\n    print 'console.log(%r)' % example\n    for line in example.split('\\n'):\n        print (' ' * 8) + line\n    print '    } catch (error) { console.log(\"ERROR: \",  error); }'",
+        "detail": "node_modules.aes-js.run-readme",
+        "documentation": {}
+    },
+    {
+        "label": "MappedValue",
+        "kind": 6,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "class MappedValue(object):\n    def __init__(self, parts):\n        self.flags = 0\n        self.rule = parts[0]\n        # If there are two parts, the second part is the mapping in question.\n        if len(parts) > 1 and parts[1]:\n            self.chars = ''.join(map(lambda u: unichr(int(u, 16)),\n                parts[1].split(' ')))\n        else:\n            self.chars = ''",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "download_unicode",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def download_unicode(version):\n    idna_tables = \"http://www.unicode.org/Public/idna/\" + version\n    infd = urllib2.urlopen(idna_tables + \"/IdnaTest.txt\")\n    #with open(\"test/test-idna2.js\", \"w\") as outfd:\n    #    build_test_code(infd, outfd)\n    with open(\"test/IdnaTest.txt\", \"w\") as outfd:\n        for line in infd:\n            outfd.write(line)\n    infd.close()\n    infd = urllib2.urlopen(idna_tables + \"/IdnaMappingTable.txt\")",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "parse_unicode_data_file",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def parse_unicode_data_file(fd):\n    '''Yield a generator of (start, end, fields) for the given Unicode data\n    file. These files are of the same basic format: a semicolon-delimited set\n    of columns, where the first column is either a single element or a range of\n    characters. In this case, the range implied by start and end are\n    inclusive.'''\n    for line in fd:\n        pos = line.find('#')\n        if pos >= 0: line = line[:pos]\n        line = line.strip()",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "utf16len",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def utf16len(string):\n    return sum(2 if ord(c) > 0xffff else 1 for c in string)\nclass MappedValue(object):\n    def __init__(self, parts):\n        self.flags = 0\n        self.rule = parts[0]\n        # If there are two parts, the second part is the mapping in question.\n        if len(parts) > 1 and parts[1]:\n            self.chars = ''.join(map(lambda u: unichr(int(u, 16)),\n                parts[1].split(' ')))",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "build_unicode_map",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def build_unicode_map(idnaMapTable, out, derivedGeneralCategory):\n    unicharMap = [0] * NUM_UCHAR\n    vals = []\n    for start, end, parts in parse_unicode_data_file(idnaMapTable):\n        for ch in range(start, end + 1):\n            value = MappedValue(parts)\n            vals.append(value)\n            unicharMap[ch] = value\n    # Note which characters have the combining mark property.\n    for start, end, parts in parse_unicode_data_file(derivedGeneralCategory):",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "find_block_sizes",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def find_block_sizes(unicharMap):\n    for lg_block_size in range(1, 15):\n        block_size = 1 << lg_block_size\n        memUsage, blocks = compute_block_size(unicharMap, block_size)\n        yield memUsage, lg_block_size, blocks\ndef compute_block_size(unicharMap, block_size):\n    blocks = set()\n    for i in range(0, len(unicharMap), block_size):\n        block = tuple(unicharMap[i:i + block_size])\n        blocks.add(block)",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "compute_block_size",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def compute_block_size(unicharMap, block_size):\n    blocks = set()\n    for i in range(0, len(unicharMap), block_size):\n        block = tuple(unicharMap[i:i + block_size])\n        blocks.add(block)\n    num = len(blocks)\n    if num < 256:\n        mem = len(unicharMap) / block_size\n    elif num < 0x10000:\n        mem = 2 * len(unicharMap) / block_size",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "convert_escape",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def convert_escape(string):\n    return string\n# These functions build the test IDNA vectors.\ndef build_body(mode, test_vector, func, expected):\n    lines = []\n    if expected[0] == '[':\n        if not re.search('[AVP]', expected):\n            return []\n        if mode == 'T' or mode == 'B':\n            lines.append(\"assert.throws(function () { %s(\\\"%s\\\", true); });\" %",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "build_body",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def build_body(mode, test_vector, func, expected):\n    lines = []\n    if expected[0] == '[':\n        if not re.search('[AVP]', expected):\n            return []\n        if mode == 'T' or mode == 'B':\n            lines.append(\"assert.throws(function () { %s(\\\"%s\\\", true); });\" %\n                (func, test_vector))\n        if mode == 'N' or mode == 'B':\n            lines.append(\"assert.throws(function () { %s(\\\"%s\\\", false); });\" %",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "build_test_code",
+        "kind": 2,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "def build_test_code(infd, out):\n    out.write(\"/* This file is generated from the Unicode IDNA table, using\\n\")\n    out.write(\"   the build-unicode-tables.py script. Please edit that\\n\")\n    out.write(\"   script instead of this file. */\\n\\n\")\n    out.write(\"var assert = require(\\\"assert\\\");\\n\")\n    out.write(\"var uts46 = require(\\\"../utr46-gold\\\");\\n\\n\")\n    out.write(\"\"\"\nfunction toAscii(input, transitional) {\n  return uts46.toAscii(input, true, transitional, true);\n}",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    },
+    {
+        "label": "NUM_UCHAR",
+        "kind": 5,
+        "importPath": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "description": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "peekOfCode": "NUM_UCHAR = 0x10ffff + 1\ndef download_unicode(version):\n    idna_tables = \"http://www.unicode.org/Public/idna/\" + version\n    infd = urllib2.urlopen(idna_tables + \"/IdnaTest.txt\")\n    #with open(\"test/test-idna2.js\", \"w\") as outfd:\n    #    build_test_code(infd, outfd)\n    with open(\"test/IdnaTest.txt\", \"w\") as outfd:\n        for line in infd:\n            outfd.write(line)\n    infd.close()",
+        "detail": "node_modules.idna-uts46-hx.build-unicode-tables",
+        "documentation": {}
+    }
+]

@@ -47,7 +47,7 @@ describe('InternalTokenLock', async () => {
     await lock.deployed();
     contracts.lock = lock;
 
-    await token.mint(lock.address, ethers.BigNumber.from(372500000).mul(DECIMALS));
+    await token.mint(lock.address, ethers.BigNumber.from(394_000_000).mul(DECIMALS));
   });
 
   it('Already fund', async () => {

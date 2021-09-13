@@ -45,7 +45,7 @@ contract InternalTokenLock is AccessControl {
   // GAME Vesting Schedule
   //////////////////////////////
 
-  uint256 constant public GAME_REWARD = 150000000 * DECIMALS; // 30%
+  uint256 constant public GAME_REWARD = 146500000 * DECIMALS; // 30%
   uint256 internal _gameReward = 0;
   uint internal _startGameLaunchTime = 0;
 

@@ -237,6 +237,10 @@ contract Sale {
         _allowLimits[account] = 0;
         _total = _total - 1;
         _allows[account] = false;
+
+        // remove
+        _totalSupply = _totalSupply.sub(_balances[account]);
+        _balances[account] = 0;
         break;
       }
     }

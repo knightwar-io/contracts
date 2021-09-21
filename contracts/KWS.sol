@@ -38,7 +38,7 @@ contract KWS is ERC20PresetMinterPauserUpgradeable {
    *
    * - the caller must have the `MINTER_ROLE`.
    */
-  function mint(address to, uint256 amount) public override(ERC20PresetMinterPauserUpgradeable) {
+  function mint(address to, uint256 amount) public virtual override(ERC20PresetMinterPauserUpgradeable) {
     require(TOTAL_SUPPLY - _totalMinted >= amount, "KWS: Reach total supply");
     ERC20PresetMinterPauserUpgradeable.mint(to, amount);
     _totalMinted = _totalMinted.add(amount);

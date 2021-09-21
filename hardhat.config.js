@@ -28,6 +28,11 @@ module.exports = {
     hardhat: {
       chainId: 1337
     },
+    bsc: {
+      url: 'https://bsc-dataseed.binance.org/',
+      accounts: [process.env.OPERATOR_PRIVATE_KEY],
+      chainId: 56,
+    },
     // rinkeby: {
     //   url: 'https://rinkeby.infura.io/v3/0720d1c4ec394f4090d9be740db47db0',
     //   accounts: [process.env.OPERATOR_PRIVATE_KEY],
@@ -49,7 +54,13 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.4"
+        version: "0.8.4",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
       }
     ],
     overrides: {

@@ -35,26 +35,29 @@ async function deploy() {
     await usdt.mint('0x275EF6963F6305152079D308265AD71C69013Bdf', ethers.BigNumber.from(1_000_000_000).mul(DECIMALS_STABLE));
   }
 
-  let token = null;
-  if (! process.env.TOKEN_ADDRESS) {
-    const Token = await H.ethers.getContractFactory('KWS');
-    token = await H.upgrades.deployProxy(Token, { initializer: 'init' });
-
-    await token.deployed();
-    console.log("KWS deployed to:", token.address);
-  } else {
-    const Token = await H.ethers.getContractFactory('KWS');
-    token = await Token.attach(process.env.TOKEN_ADDRESS);
-
-    await token.deployed();
-    console.log("KWS deployed to:", token.address);
+  if (BUSD && USDT) {} else {
+    console.log('missing usdt/busd');
+    return;
   }
+
+  let token = null;
+  if (!process.env.TOKEN_ADDRESS) {
+    return;
+  }
+
+
+  const Token = await H.ethers.getContractFactory('KWS');
+  token = await Token.attach(process.env.TOKEN_ADDRESS);
+
+  await token.deployed();
+  console.log("KWS deployed to:", token.address);
+
 
   ///// ANGEL ROUND /////
   const Sale = await H.ethers.getContractFactory('Sale');
 
   const angelSale = await Sale.deploy(
-    'KWS-Angel', 
+    'KWS-Angel',
     'KWS-AGL',
     ethers.BigNumber.from(12_500_000).mul(DECIMALS),
     ethers.BigNumber.from(125_000).mul(DECIMALS),
@@ -77,7 +80,7 @@ async function deploy() {
 
   ///// SEED ROUND /////
   const seedSale = await Sale.deploy(
-    'KWS-Seed', 
+    'KWS-Seed',
     'KWS-SEED',
     ethers.BigNumber.from(30_000_000).mul(DECIMALS),
     ethers.BigNumber.from(450_000).mul(DECIMALS),
@@ -99,7 +102,7 @@ async function deploy() {
 
   ///// PRIVATE ROUND /////
   const privateSale = await Sale.deploy(
-    'KWS-Private', 
+    'KWS-Private',
     'KWS-PRV',
     ethers.BigNumber.from(57_500_000).mul(DECIMALS),
     ethers.BigNumber.from(1_437_000).mul(DECIMALS),
@@ -121,11 +124,11 @@ async function deploy() {
 
   console.log('config:');
   console.log(JSON.stringify({
-    
+
     ANGEL: angelSale.address,
     SEED: seedSale.address,
     PRIVATE: privateSale.address,
-    
+
 
     TOKEN: token.address,
     USDT,

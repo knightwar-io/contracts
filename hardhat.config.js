@@ -18,6 +18,15 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 
+task('unlock_bounty')
+  .setAction(async (taskArgs, hre) => {
+    const Lock = await hre.ethers.getContractFactory('InternalTokenLock');
+    const lock = await Lock.attach('0xd404c042d4D24ab070ed60633e7187C847cE5E10');
+
+    await lock.unlockFreeBounty('0x66c2b727B5880E828c6a4e618A6E261ed64b66c0');
+    console.log('unlocked');
+  });
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */

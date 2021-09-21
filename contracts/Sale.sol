@@ -215,7 +215,7 @@ contract Sale {
 
   function _addAllowWithLimit(address account, uint256 totalToken) internal {
     // require(_endTime > 0, 'sale closed');
-    require(_allows[account] == false, 'already added'); // not in whitelist
+    require(_allows[account], 'already added'); // not in whitelist
     require(_total + 1 > _total); // overflow check
     require(totalToken > 0, 'total token must be greather than 0');
 

@@ -36,3 +36,15 @@ MAINNET:
 
 KWS              : 0x963b10368E4DB64a0F2f213164DB1390dBD97978
 InternalTokenLock: 0xd404c042d4D24ab070ed60633e7187C847cE5E10
+
+
+
+# Change log
+2021-09-22:
+- ITC-01: 
+  - We use tokenReceived as hook api. In development, we will apply for Game feature.
+  - InternalTokenLock.sol will be configured and transferred to the generated contract in the future (DAO/Game, etc.)
+- ITR-01: Same as above
+- SCK-01: Fixed
+- SCK-02,SCK-03: it's our business model. The investors have agreed with our conditions and signed SAFT contract. We are responsible to transfer the project's token to investors as signed SAFT
+

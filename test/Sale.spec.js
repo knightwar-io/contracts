@@ -111,8 +111,9 @@ describe('Sale', () => {
 
   describe('allowlist', async () => {
     it('add to allowlist', async () => {
-      await ITO.addAllow(SeedBuyer1.address);
-      expect((await ITO.isAllow(SeedBuyer1.address))).to.be.eq(true);
+      const tx = await ITO.addAllow(SeedBuyer2.address);
+      await tx.wait();
+      expect((await ITO.isAllow(SeedBuyer2.address))).to.be.eq(true);
     });
 
     it('add to allowlist with limit', async () => {

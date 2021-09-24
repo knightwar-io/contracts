@@ -18,8 +18,8 @@ TOKEN_ADDRESS={token_address_above} npx hardhat run scripts/deploy-internal-toke
 
 TESTNET:
 
-KWS              : 0x963b10368E4DB64a0F2f213164DB1390dBD97978
-InternalTokenLock: 0xd404c042d4D24ab070ed60633e7187C847cE5E10
+KWS              : 0x6805211479c51Df6815eDD3273c6AFcfB2A4dbc3
+InternalTokenLock: 0x73444062Ee72674bd75aA77A3F8DD6c88eD26E93
 
 Sale
 {

@@ -84,7 +84,51 @@ task('addAngel', async (_, hre) => {
   const DECIMALS = hre.ethers.BigNumber.from(10).pow(18);
 
   const Sale = await hre.ethers.getContractFactory('Sale');
-  const sale = await Sale.attach('0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE');
+  const sale = await Sale.attach('0x4E8d0165434BeCA6AAC985B5Eba6b9CA3a703734');
+
+  const items = [
+    ['0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE', 10000],
+    ['0x7f7e23E2d7DF7256E1a9fb945B375BEE74f62c83', 1000],
+  ];
+
+  for (let x of items) {
+    const [account, quantity] = x;
+    // const tx = await sale.buyFor(account, DECIMALS.mul(quantity));
+    // await tx.wait();
+
+    console.log(account, '=', quantity);
+    const c = inputReader.readChar('next(n)', { reAskOnChars: [] });
+    if (c !== 'n') { break; }
+  }
+});
+
+task('addSeed', async (_, hre) => {
+  const DECIMALS = hre.ethers.BigNumber.from(10).pow(18);
+
+  const Sale = await hre.ethers.getContractFactory('Sale');
+  const sale = await Sale.attach('0xb60C268F5D49414c42E5a7090F03B43bDace49De');
+
+  const items = [
+    ['0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE', 10000],
+    ['0x7f7e23E2d7DF7256E1a9fb945B375BEE74f62c83', 1000],
+  ];
+
+  for (let x of items) {
+    const [account, quantity] = x;
+    // const tx = await sale.buyFor(account, DECIMALS.mul(quantity));
+    // await tx.wait();
+
+    console.log(account, '=', quantity);
+    const c = inputReader.readChar('next(n)', { reAskOnChars: [] });
+    if (c !== 'n') { break; }
+  }
+});
+
+task('addPrivate', async (_, hre) => {
+  const DECIMALS = hre.ethers.BigNumber.from(10).pow(18);
+
+  const Sale = await hre.ethers.getContractFactory('Sale');
+  const sale = await Sale.attach('0xfF53Daa380F6ACDD5e54262A52C35b0667859b50');
 
   const items = [
     ['0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE', 10000],

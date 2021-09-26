@@ -19,35 +19,88 @@ task("accounts", "Prints the list of accounts", async () => {
 });
 
 
-const getLock = async (hre) => {
-  const Lock = await hre.ethers.getContractFactory('InternalTokenLock');
-  const lock = await Lock.attach('0x73444062Ee72674bd75aA77A3F8DD6c88eD26E93');
-  return lock;
-}
+// const getLock = async (hre) => {
+//   const Lock = await hre.ethers.getContractFactory('InternalTokenLock');
+//   // const lock = await Lock.attach('0x73444062Ee72674bd75aA77A3F8DD6c88eD26E93');
+//   const lock = await Lock.attach('0x38035330c4d5feBB3c64232A4FC1f5f0eF59e5F0');
+//   return lock;
+// }
 
-task('unlockBounty')
-  .setAction(async (taskArgs, hre) => {
-    const lock = await getLock(hre);
-    await lock.unlockFreeBounty('0x66c2b727B5880E828c6a4e618A6E261ed64b66c0'); // free bounty receiver
-    console.log('unlocked bounty');
-  });
+// task('unlockBounty')
+//   .setAction(async (taskArgs, hre) => {
+//     const lock = await getLock(hre);
+//     await lock.unlockFreeBounty('0x66c2b727B5880E828c6a4e618A6E261ed64b66c0'); // free bounty receiver
+//     console.log('unlocked bounty');
+//   });
 
-task('preunlockMarketing')
-  .setAction(async (taskArgs, hre) => {
-    const lock = await getLock(hre);
+// task('preunlockMarketing')
+//   .setAction(async (taskArgs, hre) => {
+//     const lock = await getLock(hre);
 
-    await lock.preunlockMarketing('0x9ABDd72efbAE328c40CF0620C4f4429506338Ee4'); // free bounty receiver
-    console.log('unlocked marketing');
-  });
+//     await lock.preunlockMarketing('0x9ABDd72efbAE328c40CF0620C4f4429506338Ee4'); // free bounty receiver
+//     console.log('unlocked marketing');
+//   });
 
-task('preunlockLiquidity')
-  .setAction(async (taskArgs, hre) => {
-    const lock = await getLock(hre);
-    await lock.preunlockLiquidity('0x4F53E6313Baf59Ad7D61fF96d3B4621B0D0be6fD'); // free bounty receiver
-    console.log('unlocked liquidity');
-  });
+// task('preunlockLiquidity')
+//   .setAction(async (taskArgs, hre) => {
+//     const lock = await getLock(hre);
+//     await lock.preunlockLiquidity('0x4F53E6313Baf59Ad7D61fF96d3B4621B0D0be6fD'); // free bounty receiver
+//     console.log('unlocked liquidity');
+//   });
+
+// task('mintPublic')
+//   .setAction(async (taskArgs, hre) => {
+//     const KWS = await hre.ethers.getContractFactory('KWS');
+
+//     // const kws = await KWS.attach('0x6805211479c51Df6815eDD3273c6AFcfB2A4dbc3'); // testnet
+//     const kws = await KWS.attach('0x5D0E95C15cA50F13fB86938433269D03112409Fe');
+
+//     await kws.mint('0xc89bf9F7C08BE22B23BC99e5c31aAf73fAc7251C', ethers.BigNumber.from(6_000_000).mul(ethers.BigNumber.from(10).pow(18)));
+
+//     console.log('minted public sale');
+//   });
 
 
+// task('xyz')
+// .setAction(async (taskArgs, hre) => {
+//   // const Sale = await hre.ethers.getContractFactory('Sale');
+//   // const sale = await Sale.attach('0xa357F2cb7C980BC61B1677b9F74fbef452f25497');
+
+//   // console.log('--------------------------------');
+//   // console.log('await sale.totalSupply();', (await sale.totalSupply()).toString());
+//   // console.log('--------------------------------');
+
+//   const Token = await hre.ethers.getContractFactory('KWS');
+//   const token = await Token.attach('0x5D0E95C15cA50F13fB86938433269D03112409Fe');
+
+//   console.log('--------------------------------');
+//   console.log('minted', (await token.totalMinted()).toString());
+//   console.log('--------------------------------');
+// });
+
+
+const inputReader = require('wait-console-input');
+task('addAngel', async (_, hre) => {
+  const DECIMALS = hre.ethers.BigNumber.from(10).pow(18);
+
+  const Sale = await hre.ethers.getContractFactory('Sale');
+  const sale = await Sale.attach('0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE');
+
+  const items = [
+    ['0x8956A2EdF1D707f6C1E7D263537cB18B0196FAdE', 10000],
+    ['0x7f7e23E2d7DF7256E1a9fb945B375BEE74f62c83', 1000],
+  ];
+
+  for (let x of items) {
+    const [account, quantity] = x;
+    // const tx = await sale.buyFor(account, DECIMALS.mul(quantity));
+    // await tx.wait();
+
+    console.log(account, '=', quantity);
+    const c = inputReader.readChar('next(n)', { reAskOnChars: [] });
+    if (c !== 'n') { break; }
+  }
+});
 
 /**
  * @type import('hardhat/config').HardhatUserConfig

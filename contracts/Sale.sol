@@ -391,6 +391,8 @@ contract Sale {
     claimable = true;
     _startClaimTime = block.timestamp;
 
+    // _token.mint(address(this), _quantity);
+
     // start claim
     for (uint i = 0; i < _total; ++i) {
       address target = _addresses[i];

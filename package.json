@@ -22,6 +22,7 @@
     "@openzeppelin/truffle-upgrades": "^1.9.1",
     "dotenv": "^10.0.0",
     "hardhat-deploy": "^0.9.1",
-    "hardhat-watcher": "^2.1.1"
+    "hardhat-watcher": "^2.1.1",
+    "wait-console-input": "^0.1.7"
   }
 }

@@ -331,7 +331,7 @@ contract Sale {
     _balances[investor] = _balances[investor].add(actualBuy);
     _totalSupply = _totalSupply.add(actualBuy);
 
-    _token.mint(address(this), actualBuy);
+    // _token.mint(address(this), actualBuy);
 
     emit OnSold(investor, stable, actualBuy);
     if (_totalSupply >= _quantity) {
@@ -391,7 +391,7 @@ contract Sale {
     claimable = true;
     _startClaimTime = block.timestamp;
 
-    // _token.mint(address(this), _quantity);
+    _token.mint(address(this), _quantity);
 
     // start claim
     for (uint i = 0; i < _total; ++i) {

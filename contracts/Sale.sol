@@ -370,7 +370,7 @@ contract Sale {
     _balances[investor] = _balances[investor].add(actualBuy);
     _totalSupply = _totalSupply.add(actualBuy);
 
-    _token.mint(address(this), actualBuy);
+    // _token.mint(address(this), actualBuy); // we already know it
 
     emit OnSoldFor(investor, actualBuy);
     if (_totalSupply >= _quantity) {

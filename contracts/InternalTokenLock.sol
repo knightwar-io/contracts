@@ -82,7 +82,7 @@ contract InternalTokenLock is AccessControl {
     }
 
     uint256 remain = this.unlockableGameReward(block.timestamp);
-    _gameReward = _gameReward + remain;
+    _gameReward = _gameReward;
 
     _token.transfer(receiver, remain);
 
